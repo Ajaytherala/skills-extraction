@@ -2,7 +2,7 @@ const API_URL = '';
 
 document.addEventListener('DOMContentLoaded', () => {
     const inputText = document.getElementById('inputText');
-    const highlights = document.getElementById('highlights');
+
     const resultsSection = document.getElementById('resultsSection');
     const loaderContainer = document.getElementById('loaderContainer');
     const statsDiv = document.getElementById('stats');
@@ -12,15 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentSkills = [];
 
     // Sync scroll
-    inputText.addEventListener('scroll', () => {
-        highlights.scrollTop = inputText.scrollTop;
-        highlights.scrollLeft = inputText.scrollLeft;
-    });
+
 
     // Input event
     inputText.addEventListener('input', () => {
         const text = inputText.value;
-        updateHighlights(text, currentSkills); // Keep existing highlights while typing
+
 
         // Debounce API call
         clearTimeout(debounceTimer);
@@ -32,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function extractSkills(text) {
         if (!text.trim()) {
             currentSkills = [];
-            updateHighlights(text, []);
+
             resultsSection.innerHTML = '';
             statsDiv.textContent = '';
             return;
@@ -63,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             currentSkills = data.extracted_skills;
 
-            updateHighlights(text, currentSkills);
+
             renderResults(data);
 
         } catch (error) {
@@ -77,64 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateHighlights(text, skills) {
-        if (!skills || skills.length === 0) {
-            highlights.innerHTML = escapeHtml(text).replace(/\n/g, '<br>');
-            return;
-        }
 
-        // Escape HTML to prevent XSS and rendering issues
-        let escapedText = escapeHtml(text);
 
-        // Create a regex to match skills case-insensitively
-        // Sort skills by length (descending) to avoid partial matches of shorter skills inside longer ones
-        const sortedSkills = [...skills].sort((a, b) => b.length - a.length);
 
-        // We need to be careful not to replace inside HTML tags if we had them, 
-        // but since we escaped everything first, it's safer.
-        // However, replacing "Go" in "Google" is a risk. 
-        // We use word boundaries \b, but some skills might contain special chars.
-
-        // A simple approach: Placeholder replacement
-        // 1. Replace skills with unique placeholders
-        // 2. Replace placeholders with <mark> tags
-
-        let tempText = escapedText;
-        const placeholders = [];
-
-        sortedSkills.forEach((skill, index) => {
-            const placeholder = `__SKILL_${index}__`;
-            // Escape regex special characters in skill name
-            const escapedSkill = skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(`\\b${escapedSkill}\\b`, 'gi');
-
-            if (regex.test(tempText)) {
-                placeholders.push({ placeholder, skill });
-                tempText = tempText.replace(regex, (match) => {
-                    return `<mark>${match}</mark>`; // Directly wrap for now, simple approach
-                });
-            }
-        });
-
-        // Handle newlines
-        tempText = tempText.replace(/\n/g, '<br>');
-
-        // For the backdrop to match textarea exactly, we need to ensure trailing newlines are handled
-        if (text.endsWith('\n')) {
-            tempText += '<br>';
-        }
-
-        highlights.innerHTML = tempText;
-    }
-
-    function escapeHtml(text) {
-        return text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
 
     function setLoading(isLoading) {
         if (isLoading) {

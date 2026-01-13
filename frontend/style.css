@@ -41,6 +41,7 @@ header h1 {
     font-weight: 700;
     background: linear-gradient(to right, #60a5fa, #a78bfa);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 0.5rem;
 }
@@ -61,7 +62,6 @@ header p {
     margin-bottom: 1rem;
 }
 
-.backdrop,
 textarea {
     position: absolute;
     top: 0;
@@ -82,31 +82,13 @@ textarea {
 }
 
 textarea {
-    z-index: 2;
     background: transparent;
     color: var(--text-primary);
     caret-color: var(--accent-color);
     outline: none;
 }
 
-.backdrop {
-    z-index: 1;
-    pointer-events: none;
-    color: transparent;
-    background: transparent;
-}
 
-.highlights {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-mark {
-    background-color: rgba(59, 130, 246, 0.3);
-    color: transparent;
-    border-radius: 4px;
-    padding: 2px 0;
-}
 
 .status-bar {
     display: flex;
