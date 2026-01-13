@@ -179,18 +179,23 @@ async def extract_endpoint(request: ExtractionRequest):
         related = retrieve_top_k_skills(onet_index, skill, onet_skills, k=request.top_k)
         # Format for JSON response
         formatted_related = []
+        skills_added = set()
         for name, score in related:
             meta = onet_metadata.get(name, {})
             # Limit SOC codes to first 5, join by comma for display if needed, or send as list
             soc_codes_list = meta.get("soc_codes", [])
             uuid_val = meta.get("uuid", "")
             
-            formatted_related.append({
-                "name": name, 
-                "score": score,
-                "soc_codes": soc_codes_list[:5], # Send top 5
-                "uuid": uuid_val
-            })
+            # Deduplicate based on title-cased name
+            normalized_name = name.title()
+            if normalized_name not in skills_added:
+                skills_added.add(normalized_name)
+                formatted_related.append({
+                    "name": normalized_name, 
+                    "score": score,
+                    "soc_codes": soc_codes_list[:5],
+                    "uuid": uuid_val
+                })
         skill_mapping[skill] = formatted_related
         
     execution_time = time.time() - start_time
