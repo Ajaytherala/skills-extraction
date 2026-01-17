@@ -1,3 +1,4 @@
+from sentence_transformers import SentenceTransformer
 import os
 import ast
 import json
@@ -13,7 +14,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from sentence_transformers import SentenceTransformer
 from ollama import chat
 
 # Configure logging

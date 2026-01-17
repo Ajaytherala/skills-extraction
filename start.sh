@@ -14,18 +14,5 @@ cd backend
 pip install -q -r requirements.txt
 
 # Start Backend in background
-echo "Starting Backend on port 8000..."
-uvicorn main:app --reload --host 0.0.0.0 --port 8001 &
-BACKEND_PID=$!
-
-# Wait for backend to start
-sleep 5
-
-
-echo "App running at http://localhost:8001"
-echo "Press CTRL+C to stop."
-
-# Trap SIGINT to kill processes
-trap "kill $BACKEND_PID; exit" INT
-
-wait
+echo "Starting Backend on port 8001..."
+uvicorn main:app --reload --host 0.0.0.0 --port 8001
